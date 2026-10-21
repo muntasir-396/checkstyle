@@ -20,3 +20,33 @@ Runnable r = new Runnable() {
 };
 
 void main() { }
+
+class Super {
+    int a;
+}
+
+class SuperNoField {
+}
+
+void testShadowing() {
+    int a = 1; // violation 'Unused named local variable 'a''
+    new Super() {
+        void test() {
+            System.out.println(a);
+        }
+    };
+}
+
+void testNoShadowing() {
+    int b = 1;
+    new SuperNoField() {
+        void test() {
+            System.out.println(b);
+        }
+    };
+}
+
+void testClean() {
+    int cleanVar = 42;
+    System.out.println(cleanVar);
+}

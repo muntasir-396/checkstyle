@@ -73,6 +73,7 @@ public class UnusedLocalVariableCheckTest extends AbstractModuleTestSupport {
             TokenTypes.RECORD_DEF,
             TokenTypes.COMPACT_CTOR_DEF,
             TokenTypes.PATTERN_VARIABLE_DEF,
+            TokenTypes.COMPACT_COMPILATION_UNIT,
         };
         assertWithMessage("Required tokens are invalid")
                 .that(actual)
@@ -106,6 +107,7 @@ public class UnusedLocalVariableCheckTest extends AbstractModuleTestSupport {
             TokenTypes.RECORD_DEF,
             TokenTypes.COMPACT_CTOR_DEF,
             TokenTypes.PATTERN_VARIABLE_DEF,
+            TokenTypes.COMPACT_COMPILATION_UNIT,
         };
         assertWithMessage("Acceptable tokens are invalid")
                 .that(actual)
@@ -395,6 +397,7 @@ public class UnusedLocalVariableCheckTest extends AbstractModuleTestSupport {
     public void testCompactSourceFile() throws Exception {
         final String[] expected = {
             "13:5: " + getCheckMessage(MSG_UNUSED_NAMED_LOCAL_VARIABLE, "unused"),
+            "32:5: " + getCheckMessage(MSG_UNUSED_NAMED_LOCAL_VARIABLE, "a"),
         };
         verifyWithInlineConfigParser(
                 getNonCompilablePath("InputUnusedLocalVariableCompactSourceFile.java"),

@@ -273,6 +273,7 @@ public class UnusedLocalVariableCheck extends AbstractCheck {
             TokenTypes.RECORD_DEF,
             TokenTypes.COMPACT_CTOR_DEF,
             TokenTypes.PATTERN_VARIABLE_DEF,
+            TokenTypes.COMPACT_COMPILATION_UNIT,
         };
     }
 
@@ -333,6 +334,9 @@ public class UnusedLocalVariableCheck extends AbstractCheck {
             leaveCompilationUnit();
         }
         else if (isNonLocalTypeDeclaration(ast)) {
+            if (ast.getType() == TokenTypes.COMPACT_COMPILATION_UNIT) {
+                leaveCompilationUnit();
+            }
             depth--;
             typeDeclarations.pop();
         }
@@ -549,8 +553,10 @@ public class UnusedLocalVariableCheck extends AbstractCheck {
      * @return true if type declaration is non-local
      */
     private static boolean isNonLocalTypeDeclaration(DetailAST typeDeclAst) {
-        return TokenUtil.isTypeDeclaration(typeDeclAst.getType())
-                && typeDeclAst.getParent().getType() != TokenTypes.SLIST;
+        return (TokenUtil.isTypeDeclaration(typeDeclAst.getType())
+                || typeDeclAst.getType() == TokenTypes.COMPACT_COMPILATION_UNIT)
+                && (typeDeclAst.getParent() == null
+                    || typeDeclAst.getParent().getType() != TokenTypes.SLIST);
     }
 
     /**
@@ -819,7 +825,13 @@ public class UnusedLocalVariableCheck extends AbstractCheck {
      * @return qualified name of type declaration
      */
     private String getQualifiedTypeDeclarationName(DetailAST typeDeclAst) {
-        final String className = typeDeclAst.findFirstToken(TokenTypes.IDENT).getText();
+        final String className;
+        if (typeDeclAst.getType() == TokenTypes.COMPACT_COMPILATION_UNIT) {
+            className = "";
+        }
+        else {
+            className = typeDeclAst.findFirstToken(TokenTypes.IDENT).getText();
+        }
         String outerClassQualifiedName = null;
         if (!typeDeclarations.isEmpty()) {
             outerClassQualifiedName = typeDeclarations.peek().getQualifiedName();
